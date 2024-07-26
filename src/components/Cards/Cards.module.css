@@ -70,3 +70,12 @@
 
   margin-bottom: -12px;
 }
+
+.counter {
+  display: block;
+  padding: 30px 0;
+  font-family: StratosSkyeng;
+  font-size: 16px;
+  color: #fff;
+}
+
