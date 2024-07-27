@@ -74,3 +74,26 @@
   cursor: pointer;
 }
 
+.level {
+  display: flex;
+  width: 97px;
+  height: 98px;
+  flex-direction: column;
+  justify-content: center;
+  flex-shrink: 0;
+
+  border-radius: 12px;
+  background: #fff;
+}
+
+.levelLink {
+  color: #0080c1;
+  text-align: center;
+  font-family: StratosSkyeng;
+  font-size: 64px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 72px;
+  text-decoration: none;
+}
+

@@ -1,0 +1,25 @@
+.container {
+    width: 100%;
+    min-height: 100%;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.title {
+    width: 127px;
+    height: 32px;
+    margin-top: 61px;
+    margin-left: 40px;
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 32px;
+    font-family: "Roboto", sans-serif;
+    color: #FFFFFF;
+}
+

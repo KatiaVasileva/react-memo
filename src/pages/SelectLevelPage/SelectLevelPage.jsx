@@ -37,6 +37,11 @@ export function SelectLevelPage() {
             Упрощенный режим (игра до трех ошибок)
           </label>
         </div>
+        <div className={styles.leaderboard}>
+          <Link className={styles.leaderboardLink} to="/leaderboard">
+            Перейти к лидерборду
+          </Link>
+        </div>
       </div>
     </div>
   );
