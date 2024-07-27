@@ -1,7 +1,14 @@
 import { Link } from "react-router-dom";
 import styles from "./SelectLevelPage.module.css";
+import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 
 export function SelectLevelPage() {
+  const { setIsSimple } = useSimpleModeContext();
+
+  const handleCheckbox = () => {
+    setIsSimple(prevState => !prevState);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.modal}>
@@ -23,6 +30,13 @@ export function SelectLevelPage() {
             </Link>
           </li>
         </ul>
+        <div>
+          <input type="checkbox" id="simple" className={styles.checkbox} onClick={handleCheckbox} />
+          <label htmlFor="simple" className={styles.label}>
+            {" "}
+            Упрощенный режим (игра до трех ошибок)
+          </label>
+        </div>
       </div>
     </div>
   );

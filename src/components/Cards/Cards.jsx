@@ -5,6 +5,7 @@ import styles from "./Cards.module.css";
 import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
+import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -51,11 +52,17 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Дата конца игры
   const [gameEndDate, setGameEndDate] = useState(null);
 
+  // Счетчик ошибок (в упрощенном режиме игры)
+  const [errCounter, setErrorCounter] = useState(0);
+
   // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
     seconds: 0,
     minutes: 0,
   });
+
+  // Состояние, определяющее включен ли упрощенный режим игры
+  const { isSimple } = useSimpleModeContext();
 
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
@@ -73,6 +80,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setGameEndDate(null);
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
+    setErrorCounter(0);
   }
 
   /**
@@ -123,7 +131,23 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       return false;
     });
 
-    const playerLost = openCardsWithoutPair.length >= 2;
+    // Определяет, програл ли игрок
+    let playerLost;
+    const isWrongCard = openCardsWithoutPair.length >= 2;
+
+    // Упрощенный режим игры (игрок проиграл, если сделал три ошибки)
+    if (isSimple) {
+      if (isWrongCard && errCounter < 2) {
+        setErrorCounter(prevState => prevState + 1);
+      } else {
+        playerLost = isWrongCard;
+      }
+    }
+
+    // Обычный режим игры (игрок проиграл, если сделал ошибку)
+    if (!isSimple) {
+      playerLost = isWrongCard;
+    }
 
     // "Игрок проиграл", т.к на поле есть две открытые карты без пары
     if (playerLost) {
@@ -209,6 +233,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           />
         ))}
       </div>
+
+      {/* Счетчик ошибок появляется только в упрощенном режиме игры */}
+      {isSimple && (
+        <div className={styles.counter}>
+          <p>Счетчик ошибок: {errCounter}</p>
+        </div>
+      )}
 
       {isGameEnded ? (
         <div className={styles.modalContainer}>

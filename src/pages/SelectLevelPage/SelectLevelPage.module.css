@@ -62,3 +62,15 @@
 .levelLink:visited {
   color: #0080c1;
 }
+
+.checkbox {
+  cursor: pointer;
+}
+
+.label {
+  font-size: 18px;
+  font-family: StratosSkyeng;
+  color: #004980;
+  cursor: pointer;
+}
+
