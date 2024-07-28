@@ -4,6 +4,10 @@ const baseHost = "https://wedev-api.sky.pro/api/leaderboard";
 export async function getLeaders() {
   const response = await fetch(baseHost, { method: "GET" });
 
+  if (response.status === 500) {
+    throw new Error("Не удалось загрузить данные, попробуйте позже");
+  }
+
   return await response.json();
 }
 

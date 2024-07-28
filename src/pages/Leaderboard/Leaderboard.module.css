@@ -81,3 +81,12 @@
 .time {
     width: 102px;
 }
+
+.errorMessage {
+    font-size: 18px;
+    font-weight: 300;
+    color: #FFFFFF;
+    margin-left: 40px;
+    margin-top: 40px;
+    font-family: "Roboto", sans-serif;
+}
