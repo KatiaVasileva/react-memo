@@ -74,26 +74,16 @@
   cursor: pointer;
 }
 
-.level {
-  display: flex;
-  width: 97px;
-  height: 98px;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-
-  border-radius: 12px;
-  background: #fff;
+.leaderboard {
+  width: 200px;
+  height: 32px;
+  padding: 30px;
 }
 
-.levelLink {
-  color: #0080c1;
-  text-align: center;
+.leaderboardLink {
+  font-size: 18px;
   font-family: StratosSkyeng;
-  font-size: 64px;
-  font-style: normal;
   font-weight: 400;
-  line-height: 72px;
-  text-decoration: none;
+  line-height: 32px;
+  color: #004980;
 }
-
