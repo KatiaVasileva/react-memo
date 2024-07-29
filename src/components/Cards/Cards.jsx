@@ -2,10 +2,11 @@ import { shuffle } from "lodash";
 import { useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
 import styles from "./Cards.module.css";
-import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
+// import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
+import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -243,6 +244,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
       {isGameEnded ? (
         <div className={styles.modalContainer}>
+          <LeaderboardModal />
+        </div>
+      ) : null}
+
+      {/* {isGameEnded ? (
+        <div className={styles.modalContainer}>
           <EndGameModal
             isWon={status === STATUS_WON}
             gameDurationSeconds={timer.seconds}
@@ -250,7 +257,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             onClick={resetGame}
           />
         </div>
-      ) : null}
+      ) : null} */}
     </div>
   );
 }
