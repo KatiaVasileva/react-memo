@@ -33,7 +33,7 @@ export function Leaderboard() {
           </div>
           {leaders.map(leader => (
             <div className={styles.line} key={leader.id}>
-              <div className={styles.position}>Позиция</div>
+              <div className={styles.position}>{leaders.indexOf(leader) + 1}</div>
               <div className={styles.user}>{leader.name}</div>
               <div className={styles.time}>{leader.time}</div>
             </div>

@@ -1,12 +1,29 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./SelectLevelPage.module.css";
 import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
+import { useLevelContext } from "../../hooks/useLevelContext";
+import { useState } from "react";
 
 export function SelectLevelPage() {
   const { setIsSimple } = useSimpleModeContext();
+  const { level, setLevel } = useLevelContext();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const navigate = useNavigate();
 
   const handleCheckbox = () => {
     setIsSimple(prevState => !prevState);
+  };
+
+  const handlePlayButton = () => {
+    if (level === 1) {
+      navigate("/game/3");
+    }
+    if (level === 2) {
+      navigate("/game/6");
+    }
+    if (level === 3) {
+      navigate("/game/9");
+    }
   };
 
   return (
@@ -14,18 +31,36 @@ export function SelectLevelPage() {
       <div className={styles.modal}>
         <h1 className={styles.title}>Выбери сложность</h1>
         <ul className={styles.levels}>
-          <li className={styles.level}>
-            <Link className={styles.levelLink} to="/game/3">
+          <li className={activeIndex === 0 ? styles.levelActive : styles.level}>
+            <Link
+              className={styles.levelLink}
+              onClick={() => {
+                setLevel(1);
+                setActiveIndex(0);
+              }}
+            >
               1
             </Link>
           </li>
-          <li className={styles.level}>
-            <Link className={styles.levelLink} to="/game/6">
+          <li className={activeIndex === 1 ? styles.levelActive : styles.level}>
+            <Link
+              className={styles.levelLink}
+              onClick={() => {
+                setLevel(2);
+                setActiveIndex(1);
+              }}
+            >
               2
             </Link>
           </li>
-          <li className={styles.level}>
-            <Link className={styles.levelLink} to="/game/9">
+          <li className={activeIndex === 2 ? styles.levelActive : styles.level}>
+            <Link
+              className={styles.levelLink}
+              onClick={() => {
+                setLevel(3);
+                setActiveIndex(2);
+              }}
+            >
               3
             </Link>
           </li>
@@ -34,9 +69,12 @@ export function SelectLevelPage() {
           <input type="checkbox" id="simple" className={styles.checkbox} onClick={handleCheckbox} />
           <label htmlFor="simple" className={styles.label}>
             {" "}
-            Упрощенный режим (игра до трех ошибок)
+            Легкий режим (3 жизни)
           </label>
         </div>
+        <button className={styles.button} onClick={handlePlayButton}>
+          Играть
+        </button>
         <div className={styles.leaderboard}>
           <Link className={styles.leaderboardLink} to="/leaderboard">
             Перейти к лидерборду

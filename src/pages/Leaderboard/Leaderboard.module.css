@@ -57,6 +57,11 @@
     display: flex;
     align-items: center;
     column-gap: 70px;
+    color: #999999;
+}
+
+.line {
+    color: #000000;
 }
 
 .position, .user, .time {
@@ -66,7 +71,6 @@
     font-weight: 400;
     line-height: 32px;
     font-family: "Poppins", sans-serif;
-    color: #999999;
 }
 
 .position {
