@@ -155,7 +155,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
               return [...acc, card];
             }, []),
           );
-        }, 1000);
+        }, 500);
       } else {
         playerLost = isWrongCard;
       }
