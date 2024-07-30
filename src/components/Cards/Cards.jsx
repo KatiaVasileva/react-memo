@@ -252,9 +252,15 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
       )}
 
+      {/* {isGameEnded && (
+        <div className={styles.modalContainer}>
+          <LeaderboardModal gameDurationSeconds={timer.seconds} gameDurationMinutes={timer.minutes} />
+        </div>
+      )} */}
+
       {isGameEnded && isLeaderboard && (
         <div className={styles.modalContainer}>
-          <LeaderboardModal />
+          <LeaderboardModal gameDurationSeconds={timer.seconds} gameDurationMinutes={timer.minutes} />
         </div>
       )}
 

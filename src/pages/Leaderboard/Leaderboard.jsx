@@ -5,6 +5,23 @@ import { useLeaderContext } from "../../hooks/useLeaderContext";
 export function Leaderboard() {
   const { leaders } = useLeaderContext();
 
+  // Сортирует массив лидеров по времени от наименьшеного к наибольшему
+  function compareByTime(leader1, leader2) {
+    if (leader1.time > leader2.time) {
+      return 1;
+    }
+    if (leader1.time < leader2.time) {
+      return -1;
+    }
+    return 0;
+  }
+
+  leaders.sort(compareByTime);
+
+  // Ограничение лидерборда 10-ю строками
+  const leaderboardLength = 10;
+  const leaderboard = leaders.slice(0, leaderboardLength);
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -19,13 +36,23 @@ export function Leaderboard() {
           <div className={styles.user}>Пользователь</div>
           <div className={styles.time}>Время</div>
         </div>
-        {leaders.map(leader => (
-          <div className={styles.line} key={leader.id}>
-            <div className={styles.position}>{leaders.indexOf(leader) + 1}</div>
-            <div className={styles.user}>{leader.name}</div>
-            <div className={styles.time}>{leader.time}</div>
-          </div>
-        ))}
+        {leaderboard
+          .map(leader => (
+            <div className={styles.line} key={leader.id}>
+              <div className={styles.position}>{leaderboard.indexOf(leader) + 1}</div>
+              <div className={styles.user}>{leader.name}</div>
+              <div className={styles.time}>
+                {Math.floor(leader.time / 60)
+                  .toString()
+                  .padStart("1", "0")}
+                :
+                {Math.floor(leader.time % 60)
+                  .toString()
+                  .padStart("2", "0")}
+              </div>
+            </div>
+          ))
+          .slice(0, 10)}
       </div>
     </div>
   );

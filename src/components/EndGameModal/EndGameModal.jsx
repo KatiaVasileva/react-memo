@@ -4,6 +4,7 @@ import { Button } from "../Button/Button";
 
 import deadImageUrl from "./images/dead.png";
 import celebrationImageUrl from "./images/celebration.png";
+import { useNavigate } from "react-router-dom";
 
 export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, onClick }) {
   const title = isWon ? "Вы победили!" : "Вы проиграли!";
@@ -11,6 +12,8 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
   const imgSrc = isWon ? celebrationImageUrl : deadImageUrl;
 
   const imgAlt = isWon ? "celebration emodji" : "dead emodji";
+
+  const navigate = useNavigate();
 
   return (
     <div className={styles.modal}>
@@ -22,6 +25,8 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
       </div>
 
       <Button onClick={onClick}>Начать сначала</Button>
+      <br />
+      <Button onClick={() => navigate("/")}>На главную</Button>
     </div>
   );
 }
