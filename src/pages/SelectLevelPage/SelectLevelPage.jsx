@@ -3,11 +3,15 @@ import styles from "./SelectLevelPage.module.css";
 import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 import { useLevelContext } from "../../hooks/useLevelContext";
 import { useState } from "react";
+import { getLeaders } from "../../api";
+import { useLeaderContext } from "../../hooks/useLeaderContext";
 
 export function SelectLevelPage() {
   const { setIsSimple } = useSimpleModeContext();
   const { level, setLevel } = useLevelContext();
+  const { setLeaders } = useLeaderContext();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [getLeadersError, setGetLeadersError] = useState(false);
   const navigate = useNavigate();
 
   const handleCheckbox = () => {
@@ -26,61 +30,74 @@ export function SelectLevelPage() {
     }
   };
 
+  getLeaders()
+    .then(leaders => {
+      setLeaders(leaders.leaders);
+    })
+    .catch(() => {
+      setGetLeadersError("Не удалось загрузить данные, попробуйте позже.");
+    });
+
   return (
-    <div className={styles.container}>
-      <div className={styles.modal}>
-        <h1 className={styles.title}>Выбери сложность</h1>
-        <ul className={styles.levels}>
-          <li className={activeIndex === 0 ? styles.levelActive : styles.level}>
-            <Link
-              className={styles.levelLink}
-              onClick={() => {
-                setLevel(1);
-                setActiveIndex(0);
-              }}
-            >
-              1
-            </Link>
-          </li>
-          <li className={activeIndex === 1 ? styles.levelActive : styles.level}>
-            <Link
-              className={styles.levelLink}
-              onClick={() => {
-                setLevel(2);
-                setActiveIndex(1);
-              }}
-            >
-              2
-            </Link>
-          </li>
-          <li className={activeIndex === 2 ? styles.levelActive : styles.level}>
-            <Link
-              className={styles.levelLink}
-              onClick={() => {
-                setLevel(3);
-                setActiveIndex(2);
-              }}
-            >
-              3
-            </Link>
-          </li>
-        </ul>
-        <div>
-          <input type="checkbox" id="simple" className={styles.checkbox} onClick={handleCheckbox} />
-          <label htmlFor="simple" className={styles.label}>
-            {" "}
-            Легкий режим (3 жизни)
-          </label>
+    <>
+      {getLeadersError && <p className={styles.errorMessage}>{getLeadersError}</p>}
+      {!getLeadersError && (
+        <div className={styles.container}>
+          <div className={styles.modal}>
+            <h1 className={styles.title}>Выбери сложность</h1>
+            <ul className={styles.levels}>
+              <li className={activeIndex === 0 ? styles.levelActive : styles.level}>
+                <Link
+                  className={styles.levelLink}
+                  onClick={() => {
+                    setLevel(1);
+                    setActiveIndex(0);
+                  }}
+                >
+                  1
+                </Link>
+              </li>
+              <li className={activeIndex === 1 ? styles.levelActive : styles.level}>
+                <Link
+                  className={styles.levelLink}
+                  onClick={() => {
+                    setLevel(2);
+                    setActiveIndex(1);
+                  }}
+                >
+                  2
+                </Link>
+              </li>
+              <li className={activeIndex === 2 ? styles.levelActive : styles.level}>
+                <Link
+                  className={styles.levelLink}
+                  onClick={() => {
+                    setLevel(3);
+                    setActiveIndex(2);
+                  }}
+                >
+                  3
+                </Link>
+              </li>
+            </ul>
+            <div>
+              <input type="checkbox" id="simple" className={styles.checkbox} onClick={handleCheckbox} />
+              <label htmlFor="simple" className={styles.label}>
+                {" "}
+                Легкий режим (3 жизни)
+              </label>
+            </div>
+            <button className={styles.button} onClick={handlePlayButton}>
+              Играть
+            </button>
+            <div className={styles.leaderboard}>
+              <Link className={styles.leaderboardLink} to="/leaderboard">
+                Перейти к лидерборду
+              </Link>
+            </div>
+          </div>
         </div>
-        <button className={styles.button} onClick={handlePlayButton}>
-          Играть
-        </button>
-        <div className={styles.leaderboard}>
-          <Link className={styles.leaderboardLink} to="/leaderboard">
-            Перейти к лидерборду
-          </Link>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

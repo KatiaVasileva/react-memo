@@ -110,3 +110,12 @@
   line-height: 32px;
   color: #004980;
 }
+
+.errorMessage {
+  font-size: 18px;
+  font-weight: 300;
+  color: #FFFFFF;
+  margin-left: 40px;
+  margin-top: 40px;
+  font-family: "Roboto", sans-serif;
+}

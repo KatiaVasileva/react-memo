@@ -2,11 +2,13 @@ import { shuffle } from "lodash";
 import { useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
 import styles from "./Cards.module.css";
-// import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
+import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
+import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
+import { useLevelContext } from "../../hooks/useLevelContext";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -55,6 +57,9 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   // Счетчик ошибок (в упрощенном режиме игры)
   const [errCounter, setErrorCounter] = useState(0);
+
+  const { leaders } = useLeaderContext();
+  const { level } = useLevelContext();
 
   // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
@@ -197,6 +202,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     };
   }, [gameStartDate, gameEndDate]);
 
+  // Сохраняет продолжительность игры игрока
+  let gameDuration = timer.minutes * 60 + timer.seconds;
+  // Определяет, попдает ли игрок на лидерборд по времени игры
+  const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -242,13 +252,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
       )}
 
-      {isGameEnded ? (
+      {isGameEnded && isLeaderboard && (
         <div className={styles.modalContainer}>
           <LeaderboardModal />
         </div>
-      ) : null}
+      )}
 
-      {/* {isGameEnded ? (
+      {isGameEnded && !isLeaderboard ? (
         <div className={styles.modalContainer}>
           <EndGameModal
             isWon={status === STATUS_WON}
@@ -257,7 +267,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             onClick={resetGame}
           />
         </div>
-      ) : null} */}
+      ) : null}
     </div>
   );
 }
