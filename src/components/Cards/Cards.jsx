@@ -143,8 +143,19 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     // Упрощенный режим игры (игрок проиграл, если сделал три ошибки)
     if (isSimple) {
+      setCards(nextCards);
       if (isWrongCard && errCounter < 2) {
         setErrorCounter(prevState => prevState + 1);
+        setTimeout(() => {
+          setCards(
+            cards.reduce((acc, card) => {
+              if (card.id === clickedCard.id) {
+                return [...acc, { ...card, open: false }];
+              }
+              return [...acc, card];
+            }, []),
+          );
+        }, 1000);
       } else {
         playerLost = isWrongCard;
       }
@@ -251,12 +262,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           <p>Счетчик ошибок: {errCounter}</p>
         </div>
       )}
-
-      {/* {isGameEnded && (
-        <div className={styles.modalContainer}>
-          <LeaderboardModal gameDurationSeconds={timer.seconds} gameDurationMinutes={timer.minutes} />
-        </div>
-      )} */}
 
       {isGameEnded && isLeaderboard && (
         <div className={styles.modalContainer}>
