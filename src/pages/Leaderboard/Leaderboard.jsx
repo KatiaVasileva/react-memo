@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import styles from "./Leaderboard.module.css";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
+import { Button } from "../../components/Button/Button";
 
 export function Leaderboard() {
   const { leaders } = useLeaderContext();
@@ -26,9 +27,9 @@ export function Leaderboard() {
     <div className={styles.container}>
       <div className={styles.header}>
         <h1 className={styles.title}>Лидерборд</h1>
-        <button className={styles.button}>
+        <Button>
           <Link to="/">Начать игру</Link>
-        </button>
+        </Button>
       </div>
       <div className={styles.board}>
         <div className={styles.titleLine}>

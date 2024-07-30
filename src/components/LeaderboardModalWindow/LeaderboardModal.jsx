@@ -4,6 +4,7 @@ import celebrationImageUrl from "./images/celebration.png";
 import { useState } from "react";
 import { addLeader } from "../../api";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
+import { Button } from "../Button/Button";
 
 export function LeaderboardModal({ gameDurationSeconds, gameDurationMinutes }) {
   const [isSubmit, setIsSubmit] = useState(false);
@@ -34,16 +35,8 @@ export function LeaderboardModal({ gameDurationSeconds, gameDurationMinutes }) {
       <div className={styles.time}>
         {gameDurationMinutes.toString().padStart("2", "0")}.{gameDurationSeconds.toString().padStart("2", "0")}
       </div>
-      {!isSubmit && (
-        <button className={styles.button} onClick={handleSubmitButton}>
-          Отправить
-        </button>
-      )}
-      {isSubmit && (
-        <button className={styles.button} onClick={handlePlayButton}>
-          Играть снова
-        </button>
-      )}
+      {!isSubmit && <Button onClick={handleSubmitButton}>Отправить</Button>}
+      {isSubmit && <Button onClick={handlePlayButton}>Играть снова</Button>}
       <div className={styles.leaderboard}>
         <Link className={styles.leaderboardLink} to="/leaderboard">
           Перейти к лидерборду

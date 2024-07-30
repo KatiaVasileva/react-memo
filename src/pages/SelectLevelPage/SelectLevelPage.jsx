@@ -8,7 +8,7 @@ import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { Button } from "../../components/Button/Button";
 
 export function SelectLevelPage() {
-  const { setIsSimple } = useSimpleModeContext();
+  const { isSimple, setIsSimple } = useSimpleModeContext();
   const { level, setLevel } = useLevelContext();
   const { setLeaders } = useLeaderContext();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -82,15 +82,19 @@ export function SelectLevelPage() {
               </li>
             </ul>
             <div className={styles.box}>
-              <input type="checkbox" id="simple" className={styles.checkbox} onClick={handleCheckbox} />
+              <input
+                type="checkbox"
+                id="simple"
+                className={styles.checkbox}
+                onClick={handleCheckbox}
+                defaultChecked={isSimple}
+              />
               <label htmlFor="simple" className={styles.label}>
                 {" "}
                 Легкий режим (3 жизни)
               </label>
             </div>
-            <Button className={styles.button} onClick={handlePlayButton}>
-              Играть
-            </Button>
+            <Button onClick={handlePlayButton}>Играть</Button>
             <div className={styles.leaderboard}>
               <Link className={styles.leaderboardLink} to="/leaderboard">
                 Перейти к лидерборду

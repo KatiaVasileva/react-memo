@@ -70,20 +70,6 @@
   
     margin-bottom: 40px;
   }
-
-  .button {
-    width: 276px;
-    height: 45px;
-    background-color: #7AC100;
-    border-radius: 12px;
-    color: #FFFFFF;
-    font-size: 24px;
-    font-weight: 400;
-    line-height: 32px;
-    font-family: "Roboto", sans-serif;
-    border: none;
-    cursor: pointer;
-  }
   
   .leaderboard {
     width: 200px;
