@@ -6,6 +6,9 @@ import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
+import { useLeaderContext } from "../../hooks/useLeaderContext";
+import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
+import { useLevelContext } from "../../hooks/useLevelContext";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -54,6 +57,9 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   // Счетчик ошибок (в упрощенном режиме игры)
   const [errCounter, setErrorCounter] = useState(0);
+
+  const { leaders } = useLeaderContext();
+  const { level } = useLevelContext();
 
   // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
@@ -137,8 +143,19 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     // Упрощенный режим игры (игрок проиграл, если сделал три ошибки)
     if (isSimple) {
+      setCards(nextCards);
       if (isWrongCard && errCounter < 2) {
         setErrorCounter(prevState => prevState + 1);
+        setTimeout(() => {
+          setCards(
+            cards.reduce((acc, card) => {
+              if (card.id === clickedCard.id) {
+                return [...acc, { ...card, open: false }];
+              }
+              return [...acc, card];
+            }, []),
+          );
+        }, 500);
       } else {
         playerLost = isWrongCard;
       }
@@ -196,6 +213,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     };
   }, [gameStartDate, gameEndDate]);
 
+  // Сохраняет продолжительность игры игрока
+  let gameDuration = timer.minutes * 60 + timer.seconds;
+  // Определяет, попдает ли игрок на лидерборд по времени игры
+  const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -241,7 +263,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
       )}
 
-      {isGameEnded ? (
+      {isGameEnded && isLeaderboard && (
+        <div className={styles.modalContainer}>
+          <LeaderboardModal gameDurationSeconds={timer.seconds} gameDurationMinutes={timer.minutes} />
+        </div>
+      )}
+
+      {isGameEnded && !isLeaderboard ? (
         <div className={styles.modalContainer}>
           <EndGameModal
             isWon={status === STATUS_WON}
