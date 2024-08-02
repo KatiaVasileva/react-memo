@@ -40,7 +40,7 @@
     border-radius: 12px;
     display: flex;
     align-items: center;
-    column-gap: 78px;
+    column-gap: 50px;
     color: #999999;
 }
 
@@ -63,7 +63,7 @@
 }
 
 .user {
-    width: 272px;
+    width: 350px;
 }
 
 .achievement {
