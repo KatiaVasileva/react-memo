@@ -40,7 +40,7 @@
     border-radius: 12px;
     display: flex;
     align-items: center;
-    column-gap: 70px;
+    column-gap: 78px;
     color: #999999;
 }
 
@@ -48,7 +48,7 @@
     color: #000000;
 }
 
-.position, .user, .time {
+.position, .user, .time, .achievement {
     height: 32px;
     align-content: center;
     font-size: 24px;
@@ -58,12 +58,24 @@
 }
 
 .position {
-    width: 178px;
+    width: 106px;
     padding-left: 20px;
 }
 
 .user {
-    width: 484px;
+    width: 272px;
+}
+
+.achievement {
+    width: 194px;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.achievementImage {
+    width: 32px;
+    height: 32px;
 }
 
 .time {
