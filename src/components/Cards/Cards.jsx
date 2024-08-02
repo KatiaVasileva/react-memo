@@ -9,6 +9,8 @@ import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
 import { useLevelContext } from "../../hooks/useLevelContext";
+import insightUrl from "./images/eye.png";
+import alohomoraUrl from "./images/cards.png";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -241,6 +243,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             </>
           )}
         </div>
+        {status === STATUS_IN_PROGRESS ? (
+          <div className={styles.powerBox}>
+            <img className={styles.power} src={insightUrl} alt="insight-power" />
+            <img className={styles.power} src={alohomoraUrl} alt="alohomora-power" />
+          </div>
+        ) : null}
         {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
       </div>
 

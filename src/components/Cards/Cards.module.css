@@ -1,5 +1,6 @@
 .container {
-  width: 672px;
+  /* width: 672px; */
+  width: 100%;
   margin: 0 auto;
   padding: 26px;
   padding-top: 22px;
@@ -11,6 +12,7 @@
   flex-direction: row;
   gap: 10px;
   flex-wrap: wrap;
+  justify-content: center;
 }
 
 .modalContainer {
@@ -69,6 +71,18 @@
   line-height: 32px;
 
   margin-bottom: -12px;
+}
+
+.powerBox {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.power {
+  width: 68px;
+  height: 68px;
+  cursor: pointer;
 }
 
 .counter {
