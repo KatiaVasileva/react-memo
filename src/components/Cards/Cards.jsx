@@ -9,7 +9,7 @@ import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
 import { useLevelContext } from "../../hooks/useLevelContext";
-import insightUrl from "./images/eye.png";
+import insighttUrl from "./images/eye.png";
 import alohomoraUrl from "./images/cards.png";
 
 // Игра закончилась
@@ -19,6 +19,7 @@ const STATUS_WON = "STATUS_WON";
 const STATUS_IN_PROGRESS = "STATUS_IN_PROGRESS";
 // Начало игры: игрок видит все карты в течении нескольких секунд
 const STATUS_PREVIEW = "STATUS_PREVIEW";
+const STATUS_PAUSE = "STATUS_PAUSE";
 
 function getTimerValue(startDate, endDate) {
   if (!startDate && !endDate) {
@@ -53,8 +54,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [status, setStatus] = useState(STATUS_PREVIEW);
 
   // Дата начала игры
+  // eslint-disable-next-line no-unused-vars
   const [gameStartDate, setGameStartDate] = useState(null);
   // Дата конца игры
+  // eslint-disable-next-line no-unused-vars
   const [gameEndDate, setGameEndDate] = useState(null);
 
   // Счетчик ошибок (в упрощенном режиме игры)
@@ -63,7 +66,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const { leaders } = useLeaderContext();
   const { level } = useLevelContext();
 
-  // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
+  // Стейт для таймера, высчитывается в setInterval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
     seconds: 0,
     minutes: 0,
@@ -207,18 +210,52 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   // Обновляем значение таймера в интервале
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimer(getTimerValue(gameStartDate, gameEndDate));
-    }, 300);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [gameStartDate, gameEndDate]);
+    if (status !== STATUS_PAUSE) {
+      if (status === STATUS_LOST || status === STATUS_WON) {
+        return;
+      }
+      const intervalId = setInterval(() => {
+        setTimer(
+          timer.seconds !== 59
+            ? timer => ({
+                ...timer,
+                seconds: timer.seconds + 1,
+              })
+            : timer => ({
+                seconds: 0,
+                minutes: timer.minutes + 1,
+              }),
+        );
+      }, 1000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [status, timer, setTimer]);
 
   // Сохраняет продолжительность игры игрока
   let gameDuration = timer.minutes * 60 + timer.seconds;
   // Определяет, попдает ли игрок на лидерборд по времени игры
   const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
+
+  // При нажатии на иконку силы "Прозрение" все карты открываются на 5 секунд, а таймер останавливается
+  const handleInsightPowerClick = () => {
+    const currentTimer = timer;
+    const currentCards = cards;
+    const openCards = cards.map(card => ({
+      ...card,
+      open: true,
+    }));
+
+    setCards(openCards);
+    setStatus(STATUS_PAUSE);
+
+    setTimeout(() => {
+      setStatus(STATUS_IN_PROGRESS);
+      setTimer(currentTimer);
+      setCards(currentCards);
+    }, 5000);
+  };
 
   return (
     <div className={styles.container}>
@@ -243,13 +280,15 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             </>
           )}
         </div>
-        {status === STATUS_IN_PROGRESS ? (
+        {status === STATUS_IN_PROGRESS || status === STATUS_PAUSE ? (
           <div className={styles.powerBox}>
-            <img className={styles.power} src={insightUrl} alt="insight-power" />
+            <img className={styles.power} onClick={handleInsightPowerClick} src={insighttUrl} alt="insight-power" />
             <img className={styles.power} src={alohomoraUrl} alt="alohomora-power" />
           </div>
         ) : null}
-        {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
+        {status === STATUS_IN_PROGRESS || status === STATUS_PAUSE ? (
+          <Button onClick={resetGame}>Начать заново</Button>
+        ) : null}
       </div>
 
       <div className={styles.cards}>
