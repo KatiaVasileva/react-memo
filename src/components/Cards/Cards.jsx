@@ -11,6 +11,7 @@ import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
 import { useLevelContext } from "../../hooks/useLevelContext";
 import insighttUrl from "./images/eye.png";
 import alohomoraUrl from "./images/cards.png";
+import { TooltipModal } from "../TooltipModal/TooltipModal";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -59,6 +60,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Дата конца игры
   // eslint-disable-next-line no-unused-vars
   const [gameEndDate, setGameEndDate] = useState(null);
+
+  const [isOpen, setIsOpen] = useState(false);
 
   // Счетчик ошибок (в упрощенном режиме игры)
   const [errCounter, setErrorCounter] = useState(0);
@@ -240,6 +243,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   // При нажатии на иконку силы "Прозрение" все карты открываются на 5 секунд, а таймер останавливается
   const handleInsightPowerClick = () => {
+    setIsOpen(false);
     const currentTimer = timer;
     const currentCards = cards;
     const openCards = cards.map(card => ({
@@ -282,7 +286,14 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
         {status === STATUS_IN_PROGRESS || status === STATUS_PAUSE ? (
           <div className={styles.powerBox}>
-            <img className={styles.power} onClick={handleInsightPowerClick} src={insighttUrl} alt="insight-power" />
+            <img
+              className={styles.power}
+              onMouseOver={() => setIsOpen(true)}
+              onMouseOut={() => setIsOpen(false)}
+              onClick={handleInsightPowerClick}
+              src={insighttUrl}
+              alt="insight-power"
+            />
             <img className={styles.power} src={alohomoraUrl} alt="alohomora-power" />
           </div>
         ) : null}
@@ -291,22 +302,37 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         ) : null}
       </div>
 
-      <div className={styles.cards}>
-        {cards.map(card => (
-          <Card
-            key={card.id}
-            onClick={() => openCard(card)}
-            open={status !== STATUS_IN_PROGRESS ? true : card.open}
-            suit={card.suit}
-            rank={card.rank}
-          />
-        ))}
+      <div className={styles.cardBox}>
+        <div className={styles.cards}>
+          {cards.map(card => (
+            <Card
+              key={card.id}
+              onClick={() => openCard(card)}
+              open={status !== STATUS_IN_PROGRESS ? true : card.open}
+              suit={card.suit}
+              rank={card.rank}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Счетчик ошибок появляется только в упрощенном режиме игры */}
       {isSimple && (
         <div className={styles.counter}>
           <p>Счетчик ошибок: {errCounter}</p>
+        </div>
+      )}
+
+      {isOpen && (
+        <div className={styles.tooltipModalContainer}>
+          <div className={styles.tooltipModalWindow}>
+            <div className={styles.insightTooltip}>
+              <TooltipModal
+                title="Прозрение"
+                text="На 5 секунд показываются все карты. Таймер длительности игры на это время останавливается."
+              />
+            </div>
+          </div>
         </div>
       )}
 

@@ -1,10 +1,14 @@
 .container {
-  /* width: 672px; */
   width: 100%;
   margin: 0 auto;
   padding: 26px;
   padding-top: 22px;
   box-sizing: border-box;
+}
+
+.cardBox {
+  display: flex;
+  justify-content: center;
 }
 
 .cards {
@@ -13,6 +17,8 @@
   gap: 10px;
   flex-wrap: wrap;
   justify-content: center;
+  width: 672px;
+  align-items: center;
 }
 
 .modalContainer {
@@ -52,6 +58,7 @@
   margin-top: 34px;
   margin-bottom: 10px;
 }
+
 .previewDescription {
   font-size: 18px;
   line-height: 18px;
@@ -93,3 +100,30 @@
   color: #fff;
 }
 
+.tooltipModalContainer {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #004980c0;
+  z-index: 1;
+}
+
+.tooltipModalWindow {
+  position: absolute;
+  top: 115px;
+  margin-right: 90px;
+  display: flex;
+}
+
+.insightTooltip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: -150px;
+}

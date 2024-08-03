@@ -1,0 +1,24 @@
+.tooltip {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 180px;
+    height: 180px;
+    background-color: #C2F5FF;
+    border-radius: 12px;
+    padding: 20px;
+
+}
+
+.tooltipTitle, .tooltipText {
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: #004980;
+}
+
+.tooltipText {
+    font-weight: 400;
+}
