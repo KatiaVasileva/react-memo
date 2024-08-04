@@ -102,7 +102,8 @@
 
 .tooltipModalContainer {
   position: absolute;
-  top: 20px;
+  margin-top: 120px;
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
@@ -115,15 +116,19 @@
 
 .tooltipModalWindow {
   position: absolute;
-  top: 115px;
+  top: 10px;
   margin-right: 90px;
   display: flex;
 }
 
-.insightTooltip {
+.insightTooltip, .alohomoraTooltip {
   display: flex;
   justify-content: center;
   align-items: center;
   position: absolute;
   left: -150px;
+}
+
+.alohomoraTooltip {
+  right: -250px;
 }

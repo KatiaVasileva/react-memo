@@ -61,7 +61,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // eslint-disable-next-line no-unused-vars
   const [gameEndDate, setGameEndDate] = useState(null);
 
+  // Состояние, определящие открытие/закрытие модального окна подсказки
   const [isOpen, setIsOpen] = useState(false);
+
+  // Состояние, определяющее, на какой значок суперсилы наведена мышь
+  const [isInsightSelected, setIsInsightSelected] = useState(false);
+  const [isAlohomoraSelected, setIsAlohomoraSelected] = useState(false);
 
   // Счетчик ошибок (в упрощенном режиме игры)
   const [errCounter, setErrorCounter] = useState(0);
@@ -288,13 +293,31 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
           <div className={styles.powerBox}>
             <img
               className={styles.power}
-              onMouseOver={() => setIsOpen(true)}
-              onMouseOut={() => setIsOpen(false)}
+              onMouseOver={() => {
+                setIsOpen(true);
+                setIsInsightSelected(true);
+              }}
+              onMouseOut={() => {
+                setIsOpen(false);
+                setIsInsightSelected(false);
+              }}
               onClick={handleInsightPowerClick}
               src={insighttUrl}
               alt="insight-power"
             />
-            <img className={styles.power} src={alohomoraUrl} alt="alohomora-power" />
+            <img
+              className={styles.power}
+              onMouseOver={() => {
+                setIsOpen(true);
+                setIsAlohomoraSelected(true);
+              }}
+              onMouseOut={() => {
+                setIsOpen(false);
+                setIsAlohomoraSelected(false);
+              }}
+              src={alohomoraUrl}
+              alt="alohomora-power"
+            />
           </div>
         ) : null}
         {status === STATUS_IN_PROGRESS || status === STATUS_PAUSE ? (
@@ -326,12 +349,19 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       {isOpen && (
         <div className={styles.tooltipModalContainer}>
           <div className={styles.tooltipModalWindow}>
-            <div className={styles.insightTooltip}>
-              <TooltipModal
-                title="Прозрение"
-                text="На 5 секунд показываются все карты. Таймер длительности игры на это время останавливается."
-              />
-            </div>
+            {isInsightSelected && (
+              <div className={styles.insightTooltip}>
+                <TooltipModal
+                  title="Прозрение"
+                  text="На 5 секунд показываются все карты. Таймер длительности игры на это время останавливается."
+                />
+              </div>
+            )}
+            {isAlohomoraSelected && (
+              <div className={styles.alohomoraTooltip}>
+                <TooltipModal title="Алохомора" text="Открывается случайная пара карт." />
+              </div>
+            )}
           </div>
         </div>
       )}
