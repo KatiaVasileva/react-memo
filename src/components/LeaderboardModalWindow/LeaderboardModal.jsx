@@ -5,11 +5,13 @@ import { useState } from "react";
 import { addLeader } from "../../api";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { Button } from "../Button/Button";
+import { useSuperPowerContext } from "../../hooks/useSuperPowerContext";
 
 export function LeaderboardModal({ gameDurationSeconds, gameDurationMinutes }) {
   const [isSubmit, setIsSubmit] = useState(false);
   const [user, setUser] = useState("");
   const { setLeaders } = useLeaderContext();
+  const { isInsightUsed } = useSuperPowerContext();
   const navigate = useNavigate();
 
   const handleInput = event => {
@@ -17,7 +19,15 @@ export function LeaderboardModal({ gameDurationSeconds, gameDurationMinutes }) {
   };
 
   const handleSubmitButton = async () => {
-    const newLeaders = await addLeader({ name: user, time: gameDurationMinutes * 60 + gameDurationSeconds });
+    let achievements = [];
+    if (!isInsightUsed) {
+      achievements.push(1);
+    }
+    const newLeaders = await addLeader({
+      name: user,
+      time: gameDurationMinutes * 60 + gameDurationSeconds,
+      achievements: achievements,
+    });
     setLeaders(newLeaders.leaders);
     setIsSubmit(true);
   };

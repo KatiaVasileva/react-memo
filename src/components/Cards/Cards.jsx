@@ -8,10 +8,11 @@ import { Card } from "../../components/Card/Card";
 import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
-import { useLevelContext } from "../../hooks/useLevelContext";
+// import { useLevelContext } from "../../hooks/useLevelContext";
 import insighttUrl from "./images/eye.png";
 import alohomoraUrl from "./images/cards.png";
 import { TooltipModal } from "../TooltipModal/TooltipModal";
+import { useSuperPowerContext } from "../../hooks/useSuperPowerContext";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -72,7 +73,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [errCounter, setErrorCounter] = useState(0);
 
   const { leaders } = useLeaderContext();
-  const { level } = useLevelContext();
+  // const { level } = useLevelContext();
+  const { setIsInsightUsed } = useSuperPowerContext();
 
   // Стейт для таймера, высчитывается в setInterval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
@@ -93,6 +95,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setGameStartDate(startDate);
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
+    setIsInsightUsed(false);
   }
   function resetGame() {
     setGameStartDate(null);
@@ -244,10 +247,12 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Сохраняет продолжительность игры игрока
   let gameDuration = timer.minutes * 60 + timer.seconds;
   // Определяет, попдает ли игрок на лидерборд по времени игры
-  const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
+  // const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
+  const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON;
 
   // При нажатии на иконку силы "Прозрение" все карты открываются на 5 секунд, а таймер останавливается
   const handleInsightPowerClick = () => {
+    setIsInsightUsed(true);
     setIsOpen(false);
     const currentTimer = timer;
     const currentCards = cards;
@@ -346,6 +351,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
       )}
 
+      {/* Открытие подсказки при наведении мыши на значок суперсилы */}
       {isOpen && (
         <div className={styles.tooltipModalContainer}>
           <div className={styles.tooltipModalWindow}>
@@ -366,12 +372,14 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
       )}
 
+      {/* Открытие модального окна лидерборда */}
       {isGameEnded && isLeaderboard && (
         <div className={styles.modalContainer}>
           <LeaderboardModal gameDurationSeconds={timer.seconds} gameDurationMinutes={timer.minutes} />
         </div>
       )}
 
+      {/* Открытие модального окна победы/проигрыша */}
       {isGameEnded && !isLeaderboard ? (
         <div className={styles.modalContainer}>
           <EndGameModal

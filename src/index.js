@@ -6,16 +6,19 @@ import { router } from "./router";
 import SimpleModeProvider from "./context/SimpleModeContext";
 import LevelProvider from "./context/LevelContext";
 import LeaderProvider from "./context/LeaderContext";
+import SuperPowerProvider from "./context/SuperPowerContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <LeaderProvider>
-      <LevelProvider>
-        <SimpleModeProvider>
-          <RouterProvider router={router}></RouterProvider>
-        </SimpleModeProvider>
-      </LevelProvider>
-    </LeaderProvider>
+    <SuperPowerProvider>
+      <LeaderProvider>
+        <LevelProvider>
+          <SimpleModeProvider>
+            <RouterProvider router={router}></RouterProvider>
+          </SimpleModeProvider>
+        </LevelProvider>
+      </LeaderProvider>
+    </SuperPowerProvider>
   </React.StrictMode>,
 );
