@@ -8,7 +8,7 @@ import { Card } from "../../components/Card/Card";
 import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
-// import { useLevelContext } from "../../hooks/useLevelContext";
+import { useLevelContext } from "../../hooks/useLevelContext";
 import insighttUrl from "./images/eye.png";
 import alohomoraUrl from "./images/cards.png";
 import { TooltipModal } from "../TooltipModal/TooltipModal";
@@ -73,7 +73,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [errCounter, setErrorCounter] = useState(0);
 
   const { leaders } = useLeaderContext();
-  // const { level } = useLevelContext();
+  const { level } = useLevelContext();
   const { setIsInsightUsed } = useSuperPowerContext();
 
   // Стейт для таймера, высчитывается в setInterval на основе gameStartDate и gameEndDate
@@ -217,6 +217,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     return () => {
       clearTimeout(timerId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, pairsCount, previewSeconds]);
 
   // Обновляем значение таймера в интервале
@@ -247,8 +248,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Сохраняет продолжительность игры игрока
   let gameDuration = timer.minutes * 60 + timer.seconds;
   // Определяет, попдает ли игрок на лидерборд по времени игры
-  // const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
-  const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON;
+  const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
 
   // При нажатии на иконку силы "Прозрение" все карты открываются на 5 секунд, а таймер останавливается
   const handleInsightPowerClick = () => {
