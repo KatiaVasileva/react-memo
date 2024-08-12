@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import styles from "./Leaderboard.module.css";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { Button } from "../../components/Button/Button";
+import magicBallInactiveUrl from "./images/magic_ball_colorless.png";
+import magicBallUrl from "./images/magic_ball.png";
+import puzzleInactiveUrl from "./images/puzzle_colorless.png";
+import puzzleUrl from "./images/puzzle.png";
 
 export function Leaderboard() {
   const { leaders } = useLeaderContext();
@@ -35,6 +39,7 @@ export function Leaderboard() {
         <div className={styles.titleLine}>
           <div className={styles.position}>Позиция</div>
           <div className={styles.user}>Пользователь</div>
+          <div className={styles.achievement}>Достижение</div>
           <div className={styles.time}>Время</div>
         </div>
         {leaderboard
@@ -42,6 +47,18 @@ export function Leaderboard() {
             <div className={styles.line} key={leader.id}>
               <div className={styles.position}>{leaderboard.indexOf(leader) + 1}</div>
               <div className={styles.user}>{leader.name}</div>
+              <div className={styles.achievement}>
+                <img
+                  className={styles.achievementImage}
+                  src={leader.achievements.includes(1) ? puzzleUrl : puzzleInactiveUrl}
+                  alt="puzzle_inactive"
+                />
+                <img
+                  className={styles.achievementImage}
+                  src={leader.achievements.includes(2) ? magicBallUrl : magicBallInactiveUrl}
+                  alt="magic_ball_inactive"
+                />
+              </div>
               <div className={styles.time}>
                 {Math.floor(leader.time / 60)
                   .toString()

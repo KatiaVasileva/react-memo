@@ -9,6 +9,10 @@ import { useSimpleModeContext } from "../../hooks/useSimpleModeContext";
 import { useLeaderContext } from "../../hooks/useLeaderContext";
 import { LeaderboardModal } from "../LeaderboardModalWindow/LeaderboardModal";
 import { useLevelContext } from "../../hooks/useLevelContext";
+import insighttUrl from "./images/eye.png";
+import alohomoraUrl from "./images/cards.png";
+import { TooltipModal } from "../TooltipModal/TooltipModal";
+import { useSuperPowerContext } from "../../hooks/useSuperPowerContext";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -17,6 +21,8 @@ const STATUS_WON = "STATUS_WON";
 const STATUS_IN_PROGRESS = "STATUS_IN_PROGRESS";
 // Начало игры: игрок видит все карты в течении нескольких секунд
 const STATUS_PREVIEW = "STATUS_PREVIEW";
+// Игра приостановлена (остановка таймера)
+const STATUS_PAUSE = "STATUS_PAUSE";
 
 function getTimerValue(startDate, endDate) {
   if (!startDate && !endDate) {
@@ -50,18 +56,25 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Текущий статус игры
   const [status, setStatus] = useState(STATUS_PREVIEW);
 
-  // Дата начала игры
-  const [gameStartDate, setGameStartDate] = useState(null);
-  // Дата конца игры
-  const [gameEndDate, setGameEndDate] = useState(null);
+  // Состояние, определящие открытие/закрытие модального окна подсказки
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  // Состояние, определяющее, на какой значок суперсилы наведена мышь
+  const [isInsightSelected, setIsInsightSelected] = useState(false);
+  const [isAlohomoraSelected, setIsAlohomoraSelected] = useState(false);
+
+  // Состояние, определяющее активность суперсилы (после первого нажатия становится неактивной)
+  const [isInsightInactive, setIsInsightInactive] = useState(false);
+  const [isAlohomoraInactive, setIsAlohomoraInactive] = useState(false);
 
   // Счетчик ошибок (в упрощенном режиме игры)
   const [errCounter, setErrorCounter] = useState(0);
 
   const { leaders } = useLeaderContext();
   const { level } = useLevelContext();
+  const { setIsInsightUsed, setIsAlohomoraUsed } = useSuperPowerContext();
 
-  // Стейт для таймера, высчитывается в setInteval на основе gameStartDate и gameEndDate
+  // Стейт для таймера, высчитывается в setInterval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
     seconds: 0,
     minutes: 0,
@@ -71,22 +84,25 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const { isSimple } = useSimpleModeContext();
 
   function finishGame(status = STATUS_LOST) {
-    setGameEndDate(new Date());
     setStatus(status);
   }
   function startGame() {
     const startDate = new Date();
-    setGameEndDate(null);
-    setGameStartDate(startDate);
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
+    setIsInsightUsed(false);
+    setIsAlohomoraUsed(false);
+    setIsInsightInactive(false);
+    setIsAlohomoraInactive(false);
   }
   function resetGame() {
-    setGameStartDate(null);
-    setGameEndDate(null);
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
     setErrorCounter(0);
+    setIsInsightUsed(false);
+    setIsAlohomoraUsed(false);
+    setIsInsightInactive(false);
+    setIsAlohomoraInactive(false);
   }
 
   /**
@@ -201,22 +217,73 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     return () => {
       clearTimeout(timerId);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, pairsCount, previewSeconds]);
 
   // Обновляем значение таймера в интервале
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setTimer(getTimerValue(gameStartDate, gameEndDate));
-    }, 300);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [gameStartDate, gameEndDate]);
+    if (status !== STATUS_PAUSE) {
+      if (status === STATUS_LOST || status === STATUS_WON) {
+        return;
+      }
+      const intervalId = setInterval(() => {
+        setTimer(
+          timer.seconds !== 59
+            ? timer => ({
+                ...timer,
+                seconds: timer.seconds + 1,
+              })
+            : timer => ({
+                seconds: 0,
+                minutes: timer.minutes + 1,
+              }),
+        );
+      }, 1000);
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
+  }, [status, timer, setTimer]);
 
   // Сохраняет продолжительность игры игрока
   let gameDuration = timer.minutes * 60 + timer.seconds;
   // Определяет, попдает ли игрок на лидерборд по времени игры
   const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
+
+  // При нажатии на значок силы "Прозрение" все карты открываются на 5 секунд, а таймер останавливается (можно использовать один раз)
+  const handleInsightPowerClick = () => {
+    setIsInsightUsed(true);
+    setIsTooltipOpen(false);
+    setIsInsightInactive(true);
+    const currentTimer = timer;
+    const currentCards = cards;
+    const openCards = cards.map(card => ({
+      ...card,
+      open: true,
+    }));
+
+    setCards(openCards);
+    setStatus(STATUS_PAUSE);
+
+    setTimeout(() => {
+      setStatus(STATUS_IN_PROGRESS);
+      setTimer(currentTimer);
+      setCards(currentCards);
+    }, 5000);
+  };
+
+  // При нажатии на значок силы "Алохомора" случайным образом открывается пара карт или вторая карта, если первая уже открыта (можно использовать один раз).
+  const handleAlohomoraPowerCLick = () => {
+    setIsAlohomoraUsed(true);
+    setIsTooltipOpen(false);
+    setIsAlohomoraInactive(true);
+    const closedCards = cards.filter(card => !card.open);
+    let randomCard = closedCards[Math.floor(Math.random() * closedCards.length)];
+    const openCards = cards.map(card => {
+      return card.suit === randomCard.suit && card.rank === randomCard.rank ? { ...card, open: true } : card;
+    });
+    setCards(openCards);
+  };
 
   return (
     <div className={styles.container}>
@@ -241,19 +308,55 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             </>
           )}
         </div>
-        {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
+        {status === STATUS_IN_PROGRESS || status === STATUS_PAUSE ? (
+          <div className={styles.powerBox}>
+            <img
+              className={isInsightInactive ? styles.powerDisabled : styles.power}
+              onMouseOver={() => {
+                setIsTooltipOpen(true);
+                setIsInsightSelected(true);
+              }}
+              onMouseOut={() => {
+                setIsTooltipOpen(false);
+                setIsInsightSelected(false);
+              }}
+              onClick={handleInsightPowerClick}
+              src={insighttUrl}
+              alt="insight-power"
+            />
+            <img
+              className={isAlohomoraInactive ? styles.powerDisabled : styles.power}
+              onMouseOver={() => {
+                setIsTooltipOpen(true);
+                setIsAlohomoraSelected(true);
+              }}
+              onMouseOut={() => {
+                setIsTooltipOpen(false);
+                setIsAlohomoraSelected(false);
+              }}
+              onClick={handleAlohomoraPowerCLick}
+              src={alohomoraUrl}
+              alt="alohomora-power"
+            />
+          </div>
+        ) : null}
+        {status === STATUS_IN_PROGRESS || status === STATUS_PAUSE ? (
+          <Button onClick={resetGame}>Начать заново</Button>
+        ) : null}
       </div>
 
-      <div className={styles.cards}>
-        {cards.map(card => (
-          <Card
-            key={card.id}
-            onClick={() => openCard(card)}
-            open={status !== STATUS_IN_PROGRESS ? true : card.open}
-            suit={card.suit}
-            rank={card.rank}
-          />
-        ))}
+      <div className={styles.cardBox}>
+        <div className={styles.cards}>
+          {cards.map(card => (
+            <Card
+              key={card.id}
+              onClick={() => openCard(card)}
+              open={status !== STATUS_IN_PROGRESS ? true : card.open}
+              suit={card.suit}
+              rank={card.rank}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Счетчик ошибок появляется только в упрощенном режиме игры */}
@@ -263,12 +366,38 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         </div>
       )}
 
+      {/* Открытие подсказки при наведении мыши на значок суперсилы */}
+      {isTooltipOpen && (
+        <div className={styles.tooltipModalContainer}>
+          <div className={styles.tooltipModalWindow}>
+            {isInsightSelected && (
+              <div className={styles.insightTooltip}>
+                <TooltipModal
+                  title="Прозрение"
+                  text="На 5 секунд показываются все карты. Таймер длительности игры на это время останавливается."
+                />
+              </div>
+            )}
+            {isAlohomoraSelected && (
+              <div className={styles.alohomoraTooltip}>
+                <TooltipModal
+                  title="Алохомора"
+                  text="Случайным образом открывается пара карт или вторая карта, если первая уже открыта."
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Открытие модального окна лидерборда */}
       {isGameEnded && isLeaderboard && (
         <div className={styles.modalContainer}>
           <LeaderboardModal gameDurationSeconds={timer.seconds} gameDurationMinutes={timer.minutes} />
         </div>
       )}
 
+      {/* Открытие модального окна победы/проигрыша */}
       {isGameEnded && !isLeaderboard ? (
         <div className={styles.modalContainer}>
           <EndGameModal

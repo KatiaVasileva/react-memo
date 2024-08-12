@@ -1,9 +1,14 @@
 .container {
-  width: 672px;
+  width: 100%;
   margin: 0 auto;
   padding: 26px;
   padding-top: 22px;
   box-sizing: border-box;
+}
+
+.cardBox {
+  display: flex;
+  justify-content: center;
 }
 
 .cards {
@@ -11,6 +16,9 @@
   flex-direction: row;
   gap: 10px;
   flex-wrap: wrap;
+  justify-content: center;
+  width: 672px;
+  align-items: center;
 }
 
 .modalContainer {
@@ -50,6 +58,7 @@
   margin-top: 34px;
   margin-bottom: 10px;
 }
+
 .previewDescription {
   font-size: 18px;
   line-height: 18px;
@@ -71,11 +80,61 @@
   margin-bottom: -12px;
 }
 
+.powerBox {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.power {
+  width: 68px;
+  height: 68px;
+  cursor: pointer;
+}
+
+.powerDisabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .counter {
   display: block;
   padding: 30px 0;
   font-family: StratosSkyeng;
   font-size: 16px;
   color: #fff;
+  text-align: center;
 }
 
+.tooltipModalContainer {
+  position: absolute;
+  margin-top: 120px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #004980c0;
+  z-index: 1;
+}
+
+.tooltipModalWindow {
+  position: absolute;
+  top: 10px;
+  margin-right: 90px;
+  display: flex;
+}
+
+.insightTooltip, .alohomoraTooltip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: -150px;
+}
+
+.alohomoraTooltip {
+  right: -250px;
+}

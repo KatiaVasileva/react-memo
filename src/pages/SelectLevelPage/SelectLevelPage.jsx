@@ -11,7 +11,6 @@ export function SelectLevelPage() {
   const { isSimple, setIsSimple } = useSimpleModeContext();
   const { level, setLevel } = useLevelContext();
   const { setLeaders } = useLeaderContext();
-  const [activeIndex, setActiveIndex] = useState(0);
   const [getLeadersError, setGetLeadersError] = useState(false);
   const navigate = useNavigate();
 
@@ -47,34 +46,31 @@ export function SelectLevelPage() {
           <div className={styles.modal}>
             <h1 className={styles.title}>Выбери сложность</h1>
             <ul className={styles.levels}>
-              <li className={activeIndex === 0 ? styles.levelActive : styles.level}>
+              <li className={level === 1 ? styles.levelActive : styles.level}>
                 <Link
                   className={styles.levelLink}
                   onClick={() => {
                     setLevel(1);
-                    setActiveIndex(0);
                   }}
                 >
                   1
                 </Link>
               </li>
-              <li className={activeIndex === 1 ? styles.levelActive : styles.level}>
+              <li className={level === 2 ? styles.levelActive : styles.level}>
                 <Link
                   className={styles.levelLink}
                   onClick={() => {
                     setLevel(2);
-                    setActiveIndex(1);
                   }}
                 >
                   2
                 </Link>
               </li>
-              <li className={activeIndex === 2 ? styles.levelActive : styles.level}>
+              <li className={level === 3 ? styles.levelActive : styles.level}>
                 <Link
                   className={styles.levelLink}
                   onClick={() => {
                     setLevel(3);
-                    setActiveIndex(2);
                   }}
                 >
                   3
