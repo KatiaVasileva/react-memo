@@ -21,6 +21,7 @@ const STATUS_WON = "STATUS_WON";
 const STATUS_IN_PROGRESS = "STATUS_IN_PROGRESS";
 // Начало игры: игрок видит все карты в течении нескольких секунд
 const STATUS_PREVIEW = "STATUS_PREVIEW";
+// Игра приостановлена (остановка таймера)
 const STATUS_PAUSE = "STATUS_PAUSE";
 
 function getTimerValue(startDate, endDate) {
@@ -55,13 +56,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Текущий статус игры
   const [status, setStatus] = useState(STATUS_PREVIEW);
 
-  // Дата начала игры
-  // eslint-disable-next-line no-unused-vars
-  const [gameStartDate, setGameStartDate] = useState(null);
-  // Дата конца игры
-  // eslint-disable-next-line no-unused-vars
-  const [gameEndDate, setGameEndDate] = useState(null);
-
   // Состояние, определящие открытие/закрытие модального окна подсказки
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
@@ -90,13 +84,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const { isSimple } = useSimpleModeContext();
 
   function finishGame(status = STATUS_LOST) {
-    setGameEndDate(new Date());
     setStatus(status);
   }
   function startGame() {
     const startDate = new Date();
-    setGameEndDate(null);
-    setGameStartDate(startDate);
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
     setIsInsightUsed(false);
@@ -105,8 +96,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setIsAlohomoraInactive(false);
   }
   function resetGame() {
-    setGameStartDate(null);
-    setGameEndDate(null);
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
     setErrorCounter(0);
