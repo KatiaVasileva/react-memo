@@ -11,7 +11,7 @@ export function LeaderboardModal({ gameDurationSeconds, gameDurationMinutes }) {
   const [isSubmit, setIsSubmit] = useState(false);
   const [user, setUser] = useState("");
   const { setLeaders } = useLeaderContext();
-  const { isInsightUsed } = useSuperPowerContext();
+  const { isInsightUsed, isAlohomoraUsed } = useSuperPowerContext();
   const navigate = useNavigate();
 
   const handleInput = event => {
@@ -23,11 +23,16 @@ export function LeaderboardModal({ gameDurationSeconds, gameDurationMinutes }) {
     if (!isInsightUsed) {
       achievements.push(1);
     }
+    if (!isAlohomoraUsed) {
+      achievements.push(2);
+    }
+
     const newLeaders = await addLeader({
       name: user,
       time: gameDurationMinutes * 60 + gameDurationSeconds,
       achievements: achievements,
     });
+
     setLeaders(newLeaders.leaders);
     setIsSubmit(true);
   };
