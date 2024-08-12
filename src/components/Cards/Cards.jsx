@@ -74,7 +74,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
   const { leaders } = useLeaderContext();
   const { level } = useLevelContext();
-  const { setIsInsightUsed } = useSuperPowerContext();
+  const { setIsInsightUsed, setIsAlohomoraUsed } = useSuperPowerContext();
 
   // Стейт для таймера, высчитывается в setInterval на основе gameStartDate и gameEndDate
   const [timer, setTimer] = useState({
@@ -96,6 +96,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
     setIsInsightUsed(false);
+    setIsAlohomoraUsed(false);
   }
   function resetGame() {
     setGameStartDate(null);
@@ -271,6 +272,17 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     }, 5000);
   };
 
+  const handleAlohomoraPowerCLick = () => {
+    setIsAlohomoraUsed(true);
+    setIsOpen(false);
+    const closedCards = cards.filter(card => !card.open);
+    let randomCard = closedCards[Math.floor(Math.random() * closedCards.length)];
+    const openCards = cards.map(card => {
+      return card.suit === randomCard.suit && card.rank === randomCard.rank ? { ...card, open: true } : card;
+    });
+    setCards(openCards);
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -320,6 +332,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
                 setIsOpen(false);
                 setIsAlohomoraSelected(false);
               }}
+              onClick={handleAlohomoraPowerCLick}
               src={alohomoraUrl}
               alt="alohomora-power"
             />
@@ -365,7 +378,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             )}
             {isAlohomoraSelected && (
               <div className={styles.alohomoraTooltip}>
-                <TooltipModal title="Алохомора" text="Открывается случайная пара карт." />
+                <TooltipModal
+                  title="Алохомора"
+                  text="Случайным образом открывается пара карт или вторая карта, если первая уже открыта."
+                />
               </div>
             )}
           </div>
