@@ -63,11 +63,15 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   const [gameEndDate, setGameEndDate] = useState(null);
 
   // Состояние, определящие открытие/закрытие модального окна подсказки
-  const [isOpen, setIsOpen] = useState(false);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
 
   // Состояние, определяющее, на какой значок суперсилы наведена мышь
   const [isInsightSelected, setIsInsightSelected] = useState(false);
   const [isAlohomoraSelected, setIsAlohomoraSelected] = useState(false);
+
+  // Состояние, определяющее активность суперсилы (после первого нажатия становится неактивной)
+  const [isInsightInactive, setIsInsightInactive] = useState(false);
+  const [isAlohomoraInactive, setIsAlohomoraInactive] = useState(false);
 
   // Счетчик ошибок (в упрощенном режиме игры)
   const [errCounter, setErrorCounter] = useState(0);
@@ -97,6 +101,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setStatus(STATUS_IN_PROGRESS);
     setIsInsightUsed(false);
     setIsAlohomoraUsed(false);
+    setIsInsightInactive(false);
+    setIsAlohomoraInactive(false);
   }
   function resetGame() {
     setGameStartDate(null);
@@ -104,6 +110,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     setTimer(getTimerValue(null, null));
     setStatus(STATUS_PREVIEW);
     setErrorCounter(0);
+    setIsInsightUsed(false);
+    setIsAlohomoraUsed(false);
+    setIsInsightInactive(false);
+    setIsAlohomoraInactive(false);
   }
 
   /**
@@ -251,10 +261,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
   // Определяет, попдает ли игрок на лидерборд по времени игры
   const isLeaderboard = gameDuration < leaders[2].time && status === STATUS_WON && level === 3;
 
-  // При нажатии на иконку силы "Прозрение" все карты открываются на 5 секунд, а таймер останавливается
+  // При нажатии на значок силы "Прозрение" все карты открываются на 5 секунд, а таймер останавливается (можно использовать один раз)
   const handleInsightPowerClick = () => {
     setIsInsightUsed(true);
-    setIsOpen(false);
+    setIsTooltipOpen(false);
+    setIsInsightInactive(true);
     const currentTimer = timer;
     const currentCards = cards;
     const openCards = cards.map(card => ({
@@ -272,9 +283,11 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     }, 5000);
   };
 
+  // При нажатии на значок силы "Алохомора" случайным образом открывается пара карт или вторая карта, если первая уже открыта (можно использовать один раз).
   const handleAlohomoraPowerCLick = () => {
     setIsAlohomoraUsed(true);
-    setIsOpen(false);
+    setIsTooltipOpen(false);
+    setIsAlohomoraInactive(true);
     const closedCards = cards.filter(card => !card.open);
     let randomCard = closedCards[Math.floor(Math.random() * closedCards.length)];
     const openCards = cards.map(card => {
@@ -309,13 +322,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         {status === STATUS_IN_PROGRESS || status === STATUS_PAUSE ? (
           <div className={styles.powerBox}>
             <img
-              className={styles.power}
+              className={isInsightInactive ? styles.powerDisabled : styles.power}
               onMouseOver={() => {
-                setIsOpen(true);
+                setIsTooltipOpen(true);
                 setIsInsightSelected(true);
               }}
               onMouseOut={() => {
-                setIsOpen(false);
+                setIsTooltipOpen(false);
                 setIsInsightSelected(false);
               }}
               onClick={handleInsightPowerClick}
@@ -323,13 +336,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
               alt="insight-power"
             />
             <img
-              className={styles.power}
+              className={isAlohomoraInactive ? styles.powerDisabled : styles.power}
               onMouseOver={() => {
-                setIsOpen(true);
+                setIsTooltipOpen(true);
                 setIsAlohomoraSelected(true);
               }}
               onMouseOut={() => {
-                setIsOpen(false);
+                setIsTooltipOpen(false);
                 setIsAlohomoraSelected(false);
               }}
               onClick={handleAlohomoraPowerCLick}
@@ -365,7 +378,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
       )}
 
       {/* Открытие подсказки при наведении мыши на значок суперсилы */}
-      {isOpen && (
+      {isTooltipOpen && (
         <div className={styles.tooltipModalContainer}>
           <div className={styles.tooltipModalWindow}>
             {isInsightSelected && (

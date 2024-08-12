@@ -92,6 +92,11 @@
   cursor: pointer;
 }
 
+.powerDisabled {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 .counter {
   display: block;
   padding: 30px 0;
